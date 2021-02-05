@@ -6,7 +6,7 @@ let g:autoloaded_sgbrowse = 1
 let s:redirects = {}
 
 function! sgbrowse#BrowseCommand(line1, count, range, bang, mods, arg, args) abort
-  if !exists('g:autoloaded_fugitive')
+  if ! &rtp =~ 'vim-fugitive'
     throw 'SGBrowse requires tpope/vim-fugitive to be installed'
   endif
 
@@ -34,12 +34,7 @@ function! s:FugitiveUrl(...) abort
     return ''
   endif
   let path = substitute(opts.path, '^/', '', '')
-  if path =~# '^\.git/refs/heads/'
-    return root . '@' . path[16:-1]
-  elseif path =~# '^\.git/refs/tags/'
-    return root . '@' . path[15:-1]
-  endif
-  let url = root . '/-/blob/' . path
+  let url = root . '@' . opts.commit . '/-/blob/' . path
   if get(opts, 'line2') && opts.line1 == opts.line2
     let url .= '#L' . opts.line1
   elseif get(opts, 'line2')
